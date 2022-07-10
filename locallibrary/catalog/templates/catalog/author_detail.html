@@ -1,18 +1,10 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    {% if book %}
-        <h1>Title: {{ author.title }}</h1>
-    {% endif %}
-    {% for libro in book %}
-        {% if libro.pk == author.pk %}
-        <!-- https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django  https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Generic_views part 6 challenge -->
-            <h1>Title: {{libro}}</h1>
-        {% endif %}
-    {% endfor %}
-
+  <h1>Title: {{ book.title }}</h1>
+    
   <p><strong>Author:</strong> <a href="">{{ author_book.author }}</a></p> <!-- author detail link not yet defined -->
-  <p><strong>Summary:</strong> {{ book.summary }}</p>
+  <p><strong>Summary:</strong> {{ author.summary }}</p>
   <p><strong>ISBN:</strong> {{ book.isbn }}</p>
   <p><strong>Language:</strong> {{ book.language }}</p>
   <p><strong>Genre:</strong> {{ book.genre.all|join:", " }}</p>

@@ -12,7 +12,7 @@
                     {% for book in author_book %}
                         {% if book.author == author %}
                             <li style="margin-left: 50px;">
-                                <a href="{{ author.get_absolute_url }}">{{book}}</a>
+                                <a href="{% url 'book-detail' pk=book.pk %}">{{book}}</a>
                             </li>
                         {% endif %}
                     {% endfor %}

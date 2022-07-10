@@ -1,7 +1,10 @@
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.views import generic
 from django.shortcuts import render
 from.models import Author, Book, BookInstance, Genre
+
 # Create your views here.
 
 
@@ -48,7 +51,7 @@ class AuthorDetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(AuthorDetailView, self).get_context_data(**kwargs)
-        context['book'] = Book.objects.all()
+        context['book'] = Book.objects.filter(pk=self.kwargs['pk'])
         return context
 
 
@@ -60,6 +63,9 @@ def index(request):
     # Available books (status = 'a')
     num_instances_available = BookInstance.objects.filter(
         status__exact='a').count()
+
+    num_visits = request.session.get('num_visits', 0)
+    request.session['num_visits'] = num_visits + 1
 
     # The 'all()' is implied by default.
     num_authors = Author.objects.count()
@@ -78,7 +84,19 @@ def index(request):
         'num_genre': num_genre,
         'book_title': book_title,
         'genre_of_book': genre_of_book,
+        'num_visits': num_visits,
     }
 
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html', context=context)
+
+
+class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
+    """Generic class-based view listing books on loan to current user."""
+    model = BookInstance
+    template_name = 'catalog/bookinstance_list_borrowed_user.html'
+    paginate_by = 10
+
+    # Template for on-loan books - https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Authentication Part 8
+    def get_queryset(self):
+        return BookInstance.objects.filter(borrower=self.request.user).filter(status__exact='o').order_by('due_back')
