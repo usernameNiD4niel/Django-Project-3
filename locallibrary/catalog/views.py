@@ -97,6 +97,5 @@ class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
     template_name = 'catalog/bookinstance_list_borrowed_user.html'
     paginate_by = 10
 
-    # Template for on-loan books - https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Authentication Part 8
     def get_queryset(self):
         return BookInstance.objects.filter(borrower=self.request.user).filter(status__exact='o').order_by('due_back')
